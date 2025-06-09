@@ -1,0 +1,31 @@
+services:
+  postgres-jayamaju:
+    image: postgres:17.5-alpine
+    container_name: postgres-jayamaju
+    environment:
+      POSTGRES_USER: admin_jayamaju
+      POSTGRES_PASSWORD: a006ybf160
+      POSTGRES_DB: metabase_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./initial_db.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+
+  metabase-jayamaju:
+    image: metabase/metabase:v0.55.1
+    container_name: metabase-jayamaju
+    ports:
+      - "3000:3000"
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: metabase_db
+      MB_DB_PORT: 5432
+      MB_DB_USER: admin_jayamaju
+      MB_DB_PASS: a006ybf160
+      MB_DB_HOST: postgres-jayamaju
+    depends_on:
+      - postgres-jayamaju
+    restart: always
+
+volumes:
+  postgres_data:
